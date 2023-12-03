@@ -38,3 +38,38 @@ std::vector<Ward> Grid::getNeighbors(int row, int col) {
   }
   return neighbors;
 }
+
+std::vector<double> Grid::getNeighbourAreas(int row, int col) {
+  std::vector<double> neighbourAreas;
+  for (int i = row - 1; i <= row + 1; i++) {
+    for (int j = col - 1; j <= col + 1; j++) {
+      if (i >= 0 && i < rows && j >= 0 && j < cols) {
+        neighbourAreas.push_back(grid[i][j].getArea());
+      }
+    }
+  }
+  return neighbourAreas;
+}
+
+std::vector<int> Grid::getNeighbourEnemies(int row, int col) {
+  std::vector<int> neighbourEnemies;
+  for (int i = row - 1; i <= row + 1; i++) {
+    for (int j = col - 1; j <= col + 1; j++) {
+      if (i >= 0 && i < rows && j >= 0 && j < cols) {
+        neighbourEnemies.push_back(grid[i][j].getEnemiesPerSquareMeter());
+      }
+    }
+  }
+  return neighbourEnemies;
+}
+
+void Grid::simulateStep() {
+  for (int i = 0; i < this->rows; i++) {
+    for (int j = 0; j < this->cols; j++) {
+      double density = grid[i][j].getPopulationPerSquareMeter();
+      std::vector<double> neighbourAreas = getNeighbourAreas(i, j);
+      std::vector<int> neighbourEnemies = getNeighbourEnemies(i, j);
+      grid[i][j].updateState(density, neighbourAreas, neighbourEnemies);
+    }
+  }
+}
