@@ -9,8 +9,8 @@ Grid::~Grid() {}
 std::vector<std::vector<Ward>> Grid::initGrid() {
   std::random_device rd;
   std::mt19937 gen(rd());
-  std::uniform_int_distribution<> distrPopulation(0, 10000);
-  std::uniform_int_distribution<> distrEnemies(0, 100);
+  std::uniform_int_distribution<> distrPopulation(0, 500);
+  std::uniform_int_distribution<> distrEnemies(0, 10);
   std::uniform_real_distribution<> distrArea(0.0, 10.0);
   std::uniform_real_distribution<> distrMortality(0.0, 1.0);
   std::vector<std::vector<Ward>> grid;
@@ -95,6 +95,20 @@ Grid::getNeighbourEnemies(int row, int col,
   return neighbourEnemies;
 }
 
+std::vector<STATE>
+Grid::getNeighboursStates(int row, int col,
+                          std::vector<std::vector<Ward>> gridCopy) {
+  std::vector<STATE> neighbourStates;
+  for (int i = row - 1; i <= row + 1; i++) {
+    for (int j = col - 1; j <= col + 1; j++) {
+      if (i >= 0 && i < rows && j >= 0 && j < cols) {
+        neighbourStates.push_back(gridCopy[i][j].getState());
+      }
+    }
+  }
+  return neighbourStates;
+}
+
 void Grid::simulateStep() {
   std::vector<std::vector<Ward>> gridCopy = grid;
 
@@ -103,8 +117,13 @@ void Grid::simulateStep() {
       double density = gridCopy[i][j].getPopulationPerSquareMeter();
       std::vector<double> neighbourAreas = getNeighbourAreas(i, j, gridCopy);
       std::vector<int> neighbourEnemies = getNeighbourEnemies(i, j, gridCopy);
+      std::vector<STATE> neighboursStates = getNeighboursStates(i, j, gridCopy);
+      double mortalityRate = gridCopy[i][j].getMortalityRate();
+      grid[i][j].updateState(density, neighbourAreas, neighbourEnemies,
+                             mortalityRate, neighboursStates);
 
-      grid[i][j].updateState(density, neighbourAreas, neighbourEnemies);
+      grid[i][j].printInfo();
+      std::cout << std::endl;
     }
   }
 }

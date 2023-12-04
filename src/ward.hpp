@@ -20,8 +20,11 @@ public:
   ~Ward();
   void setState(STATE state);
   STATE getState();
+  void printInfo();
   void updateState(double density, const std::vector<double> &neighbourAreas,
-                   const std::vector<int> &neighbourEnemies);
+                   const std::vector<int> &neighbourEnemies,
+                   double mortalityRate,
+                   const std::vector<STATE> &neighbourStates);
   int getPopulationPerSquareMeter();
   double getArea();
   int getEnemiesPerSquareMeter();

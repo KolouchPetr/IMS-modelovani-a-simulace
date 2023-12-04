@@ -13,16 +13,27 @@ Ward::~Ward() {}
 
 void Ward::setState(STATE state) { this->state = state; }
 STATE Ward::getState() { return this->state; }
+double Ward::getMortalityRate() { return this->mortalityRate; }
+int Ward::getPopulationPerSquareMeter() {
+  return this->populationPerSquareMeter;
+}
+double Ward::getArea() { return this->area; }
+int Ward::getEnemiesPerSquareMeter() { return this->enemiesPerSquareMeter; }
+
+void Ward::printInfo() {
+  std::cout << "Population per square meter: " << this->populationPerSquareMeter
+            << "\t";
+}
 void Ward::updateState(double density,
                        const std::vector<double> &neighbourAreas,
-                       const std::vector<int> &neighbourEnemies) {
-
+                       const std::vector<int> &neighbourEnemies,
+                       double mortalityRate,
+                       const std::vector<STATE> &neighbourStates) {
   auto maxEnemyIter =
       std::max_element(neighbourEnemies.begin(), neighbourEnemies.end());
   int maxEnemyCount =
       (maxEnemyIter != neighbourEnemies.end()) ? *maxEnemyIter : 0;
   int maxEnemyIndex = std::distance(neighbourEnemies.begin(), maxEnemyIter);
-
   int e1t = neighbourAreas[maxEnemyIndex] * maxEnemyCount;
 
   std::random_device rd;
@@ -32,24 +43,24 @@ void Ward::updateState(double density,
 
   double v1t_plus_1 = density - e1t * r;
 
-  if (v1t_plus_1 <= 0) {
-    this->setState(NONE);
-  } else if (v1t_plus_1 < thresholds[1]) {
-    this->setState(NORMAL);
-  } else if (v1t_plus_1 < thresholds[2]) {
-    this->setState(LIGHT);
-  } else if (v1t_plus_1 < thresholds[3]) {
-    this->setState(MEDIUM);
-  } else if (v1t_plus_1 < thresholds[4]) {
-    this->setState(HIGH);
-  } else {
-    this->setState(VERY_HIGH);
-  }
-}
+  // Pesticides effect
+  v1t_plus_1 *= (1 - mortalityRate);
 
-double Ward::getMortalityRate() { return this->mortalityRate; }
-int Ward::getPopulationPerSquareMeter() {
-  return this->populationPerSquareMeter;
+  // Immigration effect
+  int positiveStatesSum = 0;
+  int positiveStatesCount = 0;
+  for (STATE state : neighbourStates) {
+    if (state > NONE) {
+      positiveStatesSum += state;
+      positiveStatesCount++;
+    }
+  }
+
+  int averageState = (positiveStatesCount > 0)
+                         ? (positiveStatesSum / positiveStatesCount)
+                         : this->state;
+  STATE newState =
+      static_cast<STATE>(std::max(static_cast<int>(this->state), averageState));
+
+  this->setState(newState);
 }
-double Ward::getArea() { return this->area; }
-int Ward::getEnemiesPerSquareMeter() { return this->enemiesPerSquareMeter; }

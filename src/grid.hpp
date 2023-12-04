@@ -16,6 +16,10 @@ public:
                                         std::vector<std::vector<Ward>> grid);
   std::vector<int> getNeighbourEnemies(int row, int col,
                                        std::vector<std::vector<Ward>> grid);
+
+  std::vector<STATE>
+  getNeighboursStates(int row, int col,
+                      std::vector<std::vector<Ward>> gridCopy);
   STATE mapState(int population);
 
 private:
