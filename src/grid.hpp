@@ -12,8 +12,11 @@ public:
   std::vector<std::vector<Ward>> initGrid();
   std::vector<Ward> getNeighbors(int row, int col);
   void simulateStep();
-  std::vector<double> getNeighbourAreas(int row, int col);
-  std::vector<int> getNeighbourEnemies(int row, int col);
+  std::vector<double> getNeighbourAreas(int row, int col,
+                                        std::vector<std::vector<Ward>> grid);
+  std::vector<int> getNeighbourEnemies(int row, int col,
+                                       std::vector<std::vector<Ward>> grid);
+  STATE mapState(int population);
 
 private:
   int rows;

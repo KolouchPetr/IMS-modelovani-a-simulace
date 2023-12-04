@@ -6,7 +6,7 @@ enum STATE {
   NONE,
   NORMAL,
   LIGHT,
-  MEDUIM,
+  MEDIUM,
   HIGH,
   VERY_HIGH,
 };
@@ -20,8 +20,8 @@ public:
   ~Ward();
   void setState(STATE state);
   STATE getState();
-  void updateState(double density, const std::vector<double> neighbourAreas,
-                   const std::vector<int> neighbourEnemies);
+  void updateState(double density, const std::vector<double> &neighbourAreas,
+                   const std::vector<int> &neighbourEnemies);
   int getPopulationPerSquareMeter();
   double getArea();
   int getEnemiesPerSquareMeter();
