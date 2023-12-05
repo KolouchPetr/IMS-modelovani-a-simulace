@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   int steps = 0;
   Grid grid = parseArgs(argc, argv, steps);
   for (int i = 0; i < steps; i++) {
-    grid.simulateStep();
+    grid.simulateStep(i);
     grid.printGrid();
   }
   return 0;

@@ -1,6 +1,7 @@
 #include "grid.hpp"
 #include "ward.hpp"
 #include <iostream>
+#include <math.h>
 #include <random>
 
 Grid::Grid(int rows, int cols) : rows(rows), cols(cols) { grid = initGrid(); }
@@ -9,7 +10,7 @@ Grid::~Grid() {}
 std::vector<std::vector<Ward>> Grid::initGrid() {
   std::random_device rd;
   std::mt19937 gen(rd());
-  std::uniform_int_distribution<> distrPopulation(0, 500);
+  std::uniform_int_distribution<> distrPopulation(0, 1500);
   std::uniform_int_distribution<> distrEnemies(0, 10);
   std::uniform_real_distribution<> distrArea(0.0, 10.0);
   std::uniform_real_distribution<> distrMortality(0.0, 1.0);
@@ -95,6 +96,16 @@ Grid::getNeighbourEnemies(int row, int col,
   return neighbourEnemies;
 }
 
+void Grid::updateMoralities(int step) {
+  for (int i = 0; i < this->rows; i++) {
+    for (int j = 0; j < this->cols; j++) {
+      double mortalityRate = grid[i][j].getMortalityRate();
+      mortalityRate += exp(0.1 * step);
+      grid[i][j].setMoralityRate(mortalityRate);
+    }
+  }
+}
+
 std::vector<STATE>
 Grid::getNeighboursStates(int row, int col,
                           std::vector<std::vector<Ward>> gridCopy) {
@@ -109,8 +120,9 @@ Grid::getNeighboursStates(int row, int col,
   return neighbourStates;
 }
 
-void Grid::simulateStep() {
+void Grid::simulateStep(int step) {
   std::vector<std::vector<Ward>> gridCopy = grid;
+  // this->updateMoralities(step);
 
   for (int i = 0; i < this->rows; i++) {
     for (int j = 0; j < this->cols; j++) {
@@ -121,9 +133,6 @@ void Grid::simulateStep() {
       double mortalityRate = gridCopy[i][j].getMortalityRate();
       grid[i][j].updateState(density, neighbourAreas, neighbourEnemies,
                              mortalityRate, neighboursStates);
-
-      grid[i][j].printInfo();
-      std::cout << std::endl;
     }
   }
 }

@@ -26,9 +26,11 @@ public:
                    double mortalityRate,
                    const std::vector<STATE> &neighbourStates);
   int getPopulationPerSquareMeter();
+  void setPopulationPerSquareMeter(int populationPerSquareMeter);
   double getArea();
   int getEnemiesPerSquareMeter();
   double getMortalityRate();
+  void setMoralityRate(double mortalityRate);
 
 private:
   double area;

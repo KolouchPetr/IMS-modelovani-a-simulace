@@ -17,12 +17,17 @@ double Ward::getMortalityRate() { return this->mortalityRate; }
 int Ward::getPopulationPerSquareMeter() {
   return this->populationPerSquareMeter;
 }
+void Ward::setPopulationPerSquareMeter(int populationPerSquareMeter) {
+  this->populationPerSquareMeter = populationPerSquareMeter;
+}
 double Ward::getArea() { return this->area; }
 int Ward::getEnemiesPerSquareMeter() { return this->enemiesPerSquareMeter; }
-
 void Ward::printInfo() {
   std::cout << "Population per square meter: " << this->populationPerSquareMeter
             << "\t";
+}
+void Ward::setMoralityRate(double mortalityRate) {
+  this->mortalityRate = mortalityRate;
 }
 void Ward::updateState(double density,
                        const std::vector<double> &neighbourAreas,
@@ -34,7 +39,7 @@ void Ward::updateState(double density,
   int maxEnemyCount =
       (maxEnemyIter != neighbourEnemies.end()) ? *maxEnemyIter : 0;
   int maxEnemyIndex = std::distance(neighbourEnemies.begin(), maxEnemyIter);
-  int e1t = neighbourAreas[maxEnemyIndex] * maxEnemyCount;
+  int e1t = (neighbourAreas[maxEnemyIndex] * maxEnemyCount) / this->area;
 
   std::random_device rd;
   std::mt19937 gen(rd());
@@ -44,23 +49,19 @@ void Ward::updateState(double density,
   double v1t_plus_1 = density - e1t * r;
 
   // Pesticides effect
-  v1t_plus_1 *= (1 - mortalityRate);
+  // v1t_plus_1 *= (1 - this->mortalityRate);
 
-  // Immigration effect
-  int positiveStatesSum = 0;
-  int positiveStatesCount = 0;
-  for (STATE state : neighbourStates) {
-    if (state > NONE) {
-      positiveStatesSum += state;
-      positiveStatesCount++;
-    }
+  if (v1t_plus_1 <= 0) {
+    this->setState(NONE);
+  } else if (v1t_plus_1 < thresholds[1]) {
+    this->setState(NORMAL);
+  } else if (v1t_plus_1 < thresholds[2]) {
+    this->setState(LIGHT);
+  } else if (v1t_plus_1 < thresholds[3]) {
+    this->setState(MEDIUM);
+  } else if (v1t_plus_1 < thresholds[4]) {
+    this->setState(HIGH);
+  } else {
+    this->setState(VERY_HIGH);
   }
-
-  int averageState = (positiveStatesCount > 0)
-                         ? (positiveStatesSum / positiveStatesCount)
-                         : this->state;
-  STATE newState =
-      static_cast<STATE>(std::max(static_cast<int>(this->state), averageState));
-
-  this->setState(newState);
 }
