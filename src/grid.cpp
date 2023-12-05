@@ -131,8 +131,8 @@ void Grid::simulateStep(int step) {
       std::vector<int> neighbourEnemies = getNeighbourEnemies(i, j, gridCopy);
       std::vector<STATE> neighboursStates = getNeighboursStates(i, j, gridCopy);
       double mortalityRate = gridCopy[i][j].getMortalityRate();
-      grid[i][j].updateState(density, neighbourAreas, neighbourEnemies,
-                             mortalityRate, neighboursStates);
+      grid[i][j].firstTransitionRule(density, neighbourAreas, neighbourEnemies,
+                                     mortalityRate, neighboursStates);
     }
   }
 }

@@ -21,10 +21,24 @@ public:
   void setState(STATE state);
   STATE getState();
   void printInfo();
-  void updateState(double density, const std::vector<double> &neighbourAreas,
-                   const std::vector<int> &neighbourEnemies,
-                   double mortalityRate,
-                   const std::vector<STATE> &neighbourStates);
+  void setStateWithDensity(double density);
+  void firstTransitionRule(double density,
+                           const std::vector<double> &neighbourAreas,
+                           const std::vector<int> &neighbourEnemies,
+                           double mortalityRate,
+                           const std::vector<STATE> &neighbourStates);
+
+  void secondTransitionRule(double density,
+                            const std::vector<double> &neighbourAreas,
+                            const std::vector<int> &neighbourEnemies,
+                            double mortalityRate,
+                            const std::vector<STATE> &neighbourStates);
+
+  void thirdTransitionRule(double density,
+                           const std::vector<double> &neighbourAreas,
+                           const std::vector<int> &neighbourEnemies,
+                           double mortalityRate,
+                           const std::vector<STATE> &neighbourStates);
   int getPopulationPerSquareMeter();
   void setPopulationPerSquareMeter(int populationPerSquareMeter);
   double getArea();

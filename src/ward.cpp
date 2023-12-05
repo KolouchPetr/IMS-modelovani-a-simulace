@@ -29,11 +29,27 @@ void Ward::printInfo() {
 void Ward::setMoralityRate(double mortalityRate) {
   this->mortalityRate = mortalityRate;
 }
-void Ward::updateState(double density,
-                       const std::vector<double> &neighbourAreas,
-                       const std::vector<int> &neighbourEnemies,
-                       double mortalityRate,
-                       const std::vector<STATE> &neighbourStates) {
+void Ward::setStateWithDensity(double density) {
+  setPopulationPerSquareMeter(density);
+  if (density <= 0) {
+    this->state = NONE;
+  } else if (density < thresholds[1]) {
+    this->state = NORMAL;
+  } else if (density < thresholds[2]) {
+    this->state = LIGHT;
+  } else if (density < thresholds[3]) {
+    this->state = MEDIUM;
+  } else if (density < thresholds[4]) {
+    this->state = HIGH;
+  } else {
+    this->state = VERY_HIGH;
+  }
+}
+void Ward::firstTransitionRule(double density,
+                               const std::vector<double> &neighbourAreas,
+                               const std::vector<int> &neighbourEnemies,
+                               double mortalityRate,
+                               const std::vector<STATE> &neighbourStates) {
   auto maxEnemyIter =
       std::max_element(neighbourEnemies.begin(), neighbourEnemies.end());
   int maxEnemyCount =
@@ -48,20 +64,34 @@ void Ward::updateState(double density,
 
   double v1t_plus_1 = density - e1t * r;
 
-  // Pesticides effect
-  // v1t_plus_1 *= (1 - this->mortalityRate);
+  setStateWithDensity(v1t_plus_1);
+}
 
-  if (v1t_plus_1 <= 0) {
-    this->setState(NONE);
-  } else if (v1t_plus_1 < thresholds[1]) {
-    this->setState(NORMAL);
-  } else if (v1t_plus_1 < thresholds[2]) {
-    this->setState(LIGHT);
-  } else if (v1t_plus_1 < thresholds[3]) {
-    this->setState(MEDIUM);
-  } else if (v1t_plus_1 < thresholds[4]) {
-    this->setState(HIGH);
-  } else {
-    this->setState(VERY_HIGH);
+void Ward::secondTransitionRule(double density,
+                                const std::vector<double> &neighbourAreas,
+                                const std::vector<int> &neighbourEnemies,
+                                double mortalityRate,
+                                const std::vector<STATE> &neighbourStates) {
+  double v1t_plus_1 = density * (1 - this->mortalityRate);
+  setStateWithDensity(v1t_plus_1);
+}
+
+void Ward::thirdTransitionRule(double density,
+                               const std::vector<double> &neighbourAreas,
+                               const std::vector<int> &neighbourEnemies,
+                               double mortalityRate,
+                               const std::vector<STATE> &neighbourStates) {
+  int positiveStatesSum = 0;
+  int positiveStatesCount = 0;
+  for (STATE state : neighbourStates) {
+    if (state > NONE) {
+      positiveStatesSum += state;
+      positiveStatesCount++;
+    }
   }
+  int averageState = (positiveStatesCount > 0)
+                         ? positiveStatesSum / positiveStatesCount
+                         : this->state;
+  int deviation = abs(averageState - this->state);
+  setState(static_cast<STATE>(deviation));
 }
