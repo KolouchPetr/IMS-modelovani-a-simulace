@@ -28,6 +28,7 @@ std::vector<Ward> Parser::parseRowsFromFile(std::istream &stream) {
     int id = std::stoi(tokens[0]);
     std::string name = tokens[1];
     double area = std::stod(tokens[2]);
+    area /= 1000000;
 
     // TODO keep 0 or generate random number?
     int enemiesPerSquareMeter = std::stoi(tokens[3]);

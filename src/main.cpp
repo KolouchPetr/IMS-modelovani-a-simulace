@@ -40,6 +40,8 @@ int main(int argc, char *argv[]) {
   if (!std::cin.eof()) {
     std::vector<Ward> wards = Parser::parseRowsFromFile(std::cin);
     Grid grid = Grid(wards);
+    grid.printInfo();
+    std::cout << "---------------------" << std::endl;
     parseArgs(argc, argv, steps, transitionRules);
     for (int i = 0; i < steps; i++) {
       grid.simulateStep(i, transitionRules);

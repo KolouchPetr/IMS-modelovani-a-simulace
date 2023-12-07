@@ -81,8 +81,15 @@ void Ward::firstTransitionRule(double density,
 
   std::random_device rd;
   std::mt19937 gen(rd());
-  std::uniform_int_distribution<> dis(0, maxEnemyCount);
+  // FIXME this
+  std::uniform_int_distribution<> dis(0, 1);
   int r = dis(gen);
+
+  if (this->id == 2396) {
+    std::cout << "density: " << density << std::endl;
+    std::cout << "e1t: " << e1t << std::endl;
+    std::cout << "r: " << r << std::endl;
+  }
 
   double v1t_plus_1 = density - e1t * r;
 
