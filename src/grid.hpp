@@ -2,6 +2,7 @@
 #define GRID_HPP
 
 #include "ward.hpp"
+#include <bitset>
 #include <unordered_map>
 #include <vector>
 
@@ -11,7 +12,7 @@ public:
   ~Grid();
   std::unordered_map<int, Ward> initGrid(std::vector<Ward> wards);
   std::vector<Ward> getNeighbors(Ward ward);
-  void simulateStep(int step);
+  void simulateStep(int step, std::bitset<3> transitionRules);
   std::vector<double>
   getNeighbourAreas(Ward ward, std::unordered_map<int, Ward> wardMapCopy);
   std::vector<int>

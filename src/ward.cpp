@@ -5,7 +5,9 @@
 
 Ward::Ward()
     : id(0), area(0.0), enemiesPerSquareMeter(0), mortalityRate(0.0),
-      populationPerSquareMeter(0) {}
+      populationPerSquareMeter(0) {
+  setStateWithDensity(0.0);
+}
 Ward::Ward(int id, std::string name, double area, int enemiesPerSquareMeter,
            double mortalityRate, int populationPerSquareMeter,
            std::vector<int> neighbourIDs)
@@ -49,8 +51,11 @@ void Ward::setMoralityRate(double mortalityRate) {
   this->mortalityRate = mortalityRate;
 }
 void Ward::setStateWithDensity(double density) {
+  if (density < 0) {
+    density = 0;
+  }
   setPopulationPerSquareMeter(density);
-  if (density <= 0) {
+  if (density <= thresholds[0]) {
     this->state = NONE;
   } else if (density < thresholds[1]) {
     this->state = NORMAL;
@@ -66,9 +71,7 @@ void Ward::setStateWithDensity(double density) {
 }
 void Ward::firstTransitionRule(double density,
                                const std::vector<double> &neighbourAreas,
-                               const std::vector<int> &neighbourEnemies,
-                               double mortalityRate,
-                               const std::vector<STATE> &neighbourStates) {
+                               const std::vector<int> &neighbourEnemies) {
   auto maxEnemyIter =
       std::max_element(neighbourEnemies.begin(), neighbourEnemies.end());
   int maxEnemyCount =
@@ -86,20 +89,12 @@ void Ward::firstTransitionRule(double density,
   setStateWithDensity(v1t_plus_1);
 }
 
-void Ward::secondTransitionRule(double density,
-                                const std::vector<double> &neighbourAreas,
-                                const std::vector<int> &neighbourEnemies,
-                                double mortalityRate,
-                                const std::vector<STATE> &neighbourStates) {
+void Ward::secondTransitionRule(double density) {
   double v1t_plus_1 = density * (1 - this->mortalityRate);
   setStateWithDensity(v1t_plus_1);
 }
 
-void Ward::thirdTransitionRule(double density,
-                               const std::vector<double> &neighbourAreas,
-                               const std::vector<int> &neighbourEnemies,
-                               double mortalityRate,
-                               const std::vector<STATE> &neighbourStates) {
+void Ward::thirdTransitionRule(const std::vector<STATE> &neighbourStates) {
   int positiveStatesSum = 0;
   int positiveStatesCount = 0;
   for (STATE state : neighbourStates) {

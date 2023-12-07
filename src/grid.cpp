@@ -15,7 +15,7 @@ std::unordered_map<int, Ward> Grid::initGrid(std::vector<Ward> wards) {
 }
 
 STATE Grid::mapState(int population) {
-  if (population < thresholds[0]) {
+  if (population <= thresholds[0]) {
     return NONE;
   } else if (population <= thresholds[1]) {
     return NORMAL;
@@ -34,7 +34,7 @@ void Grid::printInfo() {
   for (auto &ward : wardMap) {
     std::cout << "Ward " << ward.second.getName() << " has "
               << ward.second.getPopulationPerSquareMeter()
-              << " people per square meter and is in state "
+              << " PHB per square meter and is in state "
               << ward.second.getState() << std::endl;
   }
 }
@@ -85,10 +85,8 @@ Grid::getNeighboursStates(Ward ward,
   return neighbourStates;
 }
 
-void Grid::simulateStep(int step) {
+void Grid::simulateStep(int step, std::bitset<3> transitionRules) {
   std::unordered_map<int, Ward> wardMapCopy = wardMap;
-
-  // this->updateMoralities(step);
 
   for (auto &ward : wardMap) {
     double density = ward.second.getPopulationPerSquareMeter();
@@ -98,8 +96,17 @@ void Grid::simulateStep(int step) {
         getNeighbourEnemies(ward.second, wardMapCopy);
     std::vector<STATE> neighboursStates =
         getNeighboursStates(ward.second, wardMapCopy);
-    double mortalityRate = ward.second.getMortalityRate();
-    ward.second.firstTransitionRule(density, neighbourAreas, neighbourEnemies,
-                                    mortalityRate, neighboursStates);
+
+    if (transitionRules[0]) {
+      ward.second.firstTransitionRule(density, neighbourAreas,
+                                      neighbourEnemies);
+    }
+    if (transitionRules[1]) {
+      this->updateMortalities(step);
+      ward.second.secondTransitionRule(density);
+    }
+    if (transitionRules[2]) {
+      ward.second.thirdTransitionRule(neighboursStates);
+    }
   }
 }

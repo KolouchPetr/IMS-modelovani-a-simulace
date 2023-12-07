@@ -35,13 +35,14 @@ std::vector<Ward> Parser::parseRowsFromFile(std::istream &stream) {
     int populationPerSquareMeter = std::stoi(tokens[5]);
 
     std::vector<int> neighbourIDs;
-    for (int i = 6; i < tokens.size(); i++) {
+    for (size_t i = 6; i < tokens.size(); i++) {
       if (!tokens.empty()) {
         neighbourIDs.push_back(std::stoi(tokens[i]));
       }
     }
-    wards.push_back(Ward(id, name, area, enemiesPerSquareMeter, mortalityRate,
-                         populationPerSquareMeter, neighbourIDs));
+    Ward ward(id, name, area, enemiesPerSquareMeter, mortalityRate,
+              populationPerSquareMeter, neighbourIDs);
+    wards.push_back(ward);
   }
   return wards;
 }
