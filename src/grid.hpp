@@ -2,31 +2,29 @@
 #define GRID_HPP
 
 #include "ward.hpp"
+#include <unordered_map>
 #include <vector>
 
 class Grid {
 public:
-  Grid(int rows, int cols);
+  Grid(std::vector<Ward> wards);
   ~Grid();
-  void printGrid();
-  std::vector<std::vector<Ward>> initGrid();
-  std::vector<Ward> getNeighbors(int row, int col);
+  std::unordered_map<int, Ward> initGrid(std::vector<Ward> wards);
+  std::vector<Ward> getNeighbors(Ward ward);
   void simulateStep(int step);
-  std::vector<double> getNeighbourAreas(int row, int col,
-                                        std::vector<std::vector<Ward>> grid);
-  std::vector<int> getNeighbourEnemies(int row, int col,
-                                       std::vector<std::vector<Ward>> grid);
-  void updateMoralities(int step);
+  std::vector<double>
+  getNeighbourAreas(Ward ward, std::unordered_map<int, Ward> wardMapCopy);
+  std::vector<int>
+  getNeighbourEnemies(Ward ward, std::unordered_map<int, Ward> wardMapCopy);
+  void updateMortalities(int step);
 
   std::vector<STATE>
-  getNeighboursStates(int row, int col,
-                      std::vector<std::vector<Ward>> gridCopy);
+  getNeighboursStates(Ward ward, std::unordered_map<int, Ward> wardMapCopy);
   STATE mapState(int population);
+  void printInfo();
 
 private:
-  int rows;
-  int cols;
-  std::vector<std::vector<Ward>> grid;
+  std::unordered_map<int, Ward> wardMap;
 };
 
 #endif

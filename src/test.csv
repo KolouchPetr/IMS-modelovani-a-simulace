@@ -1,0 +1,8 @@
+row, col, area, enemiesPerSquareMeter, mortalityRate, populationPerSquareMeter
+0, 0, 35.53, 47, x, 322
+0, 1, 9.118, 28, x, 66
+1, 0, 22.93, 41, x, 1510
+1, 1, 36.37, 160, x, 215
+2, 0, 16.98, 0, x, 70000
+2, 1, 22.41, 14, x, 22
+3, 0, 31.11, 0, x, 0

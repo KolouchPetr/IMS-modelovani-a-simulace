@@ -1,5 +1,6 @@
 #ifndef WARD_HPP
 #define WARD_HPP
+#include <string>
 #include <vector>
 
 enum STATE {
@@ -15,8 +16,10 @@ const int thresholds[] = {0, 500, 1499, 2999, 9999};
 
 class Ward {
 public:
-  Ward(STATE state, double area, int enemiesPerSquareMeter,
-       double mortalityRate, int populationPerSquareMeter);
+  Ward();
+  Ward(int id, std::string name, double area, int enemiesPerSquareMeter,
+       double mortalityRate, int populationPerSquareMeter,
+       std::vector<int> neighbourIDs);
   ~Ward();
   void setState(STATE state);
   STATE getState();
@@ -45,12 +48,18 @@ public:
   int getEnemiesPerSquareMeter();
   double getMortalityRate();
   void setMoralityRate(double mortalityRate);
+  int getID() { return this->id; }
+  std::vector<int> getNeighbourIDs() { return this->neighbourIDs; }
+  std::string getName() { return this->name; }
 
 private:
+  int id;
+  std::string name;
   double area;
   int enemiesPerSquareMeter;
   double mortalityRate;
   int populationPerSquareMeter;
+  std::vector<int> neighbourIDs;
   STATE state;
 };
 

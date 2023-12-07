@@ -1,8 +1,8 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -g -O2 -pedantic -Wall -Wextra
 
-OBJS = main.o grid.o ward.o
-DEPS = grid.hpp ward.hpp
+OBJS = main.o grid.o ward.o parser.o
+DEPS = grid.hpp ward.hpp parser.hpp
 EXEC = ca_simulation
 
 all: $(EXEC)

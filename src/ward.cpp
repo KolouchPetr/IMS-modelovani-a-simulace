@@ -3,12 +3,19 @@
 #include <iostream>
 #include <random>
 
-Ward::Ward(STATE state, double area, int enemiesPerSquareMeter,
-           double mortalityRate, int populationPerSquareMeter)
-    : state(state), area(area), enemiesPerSquareMeter(enemiesPerSquareMeter),
+Ward::Ward()
+    : id(0), area(0.0), enemiesPerSquareMeter(0), mortalityRate(0.0),
+      populationPerSquareMeter(0) {}
+Ward::Ward(int id, std::string name, double area, int enemiesPerSquareMeter,
+           double mortalityRate, int populationPerSquareMeter,
+           std::vector<int> neighbourIDs)
+    : id(id), name(name), area(area),
+      enemiesPerSquareMeter(enemiesPerSquareMeter),
       mortalityRate(mortalityRate),
-      populationPerSquareMeter(populationPerSquareMeter) {}
-
+      populationPerSquareMeter(populationPerSquareMeter),
+      neighbourIDs(neighbourIDs) {
+  setStateWithDensity(populationPerSquareMeter);
+}
 Ward::~Ward() {}
 
 void Ward::setState(STATE state) { this->state = state; }
@@ -23,8 +30,20 @@ void Ward::setPopulationPerSquareMeter(int populationPerSquareMeter) {
 double Ward::getArea() { return this->area; }
 int Ward::getEnemiesPerSquareMeter() { return this->enemiesPerSquareMeter; }
 void Ward::printInfo() {
+  std::cout << "ID: " << this->id << std::endl;
+  std::cout << "Name: " << this->name << std::endl;
+  std::cout << "Area: " << this->area << std::endl;
+  std::cout << "Enemies per square meter: " << this->enemiesPerSquareMeter
+            << std::endl;
+  std::cout << "Mortality rate: " << this->mortalityRate << std::endl;
   std::cout << "Population per square meter: " << this->populationPerSquareMeter
-            << "\t";
+            << std::endl;
+  std::cout << "Neighbour IDs: ";
+  for (int neighbourID : this->neighbourIDs) {
+    std::cout << neighbourID << " ";
+  }
+  std::cout << std::endl;
+  std::cout << "State: " << this->state << std::endl;
 }
 void Ward::setMoralityRate(double mortalityRate) {
   this->mortalityRate = mortalityRate;

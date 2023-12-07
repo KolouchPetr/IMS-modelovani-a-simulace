@@ -2,31 +2,16 @@
 #include "ward.hpp"
 #include <iostream>
 #include <math.h>
-#include <random>
 
-Grid::Grid(int rows, int cols) : rows(rows), cols(cols) { grid = initGrid(); }
+Grid::Grid(std::vector<Ward> wards) { wardMap = initGrid(wards); }
 Grid::~Grid() {}
 
-std::vector<std::vector<Ward>> Grid::initGrid() {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<> distrPopulation(0, 1500);
-  std::uniform_int_distribution<> distrEnemies(0, 10);
-  std::uniform_real_distribution<> distrArea(0.0, 10.0);
-  std::uniform_real_distribution<> distrMortality(0.0, 1.0);
-  std::vector<std::vector<Ward>> grid;
-  for (int i = 0; i < this->rows; i++) {
-    std::vector<Ward> row;
-    for (int j = 0; j < this->cols; j++) {
-      int population = distrPopulation(gen);
-      STATE state = mapState(population);
-      Ward ward(state, distrArea(gen), distrEnemies(gen), distrMortality(gen),
-                population);
-      row.push_back(ward);
-    }
-    grid.push_back(row);
+std::unordered_map<int, Ward> Grid::initGrid(std::vector<Ward> wards) {
+  std::unordered_map<int, Ward> wardMap;
+  for (auto &ward : wards) {
+    wardMap.insert({ward.getID(), ward});
   }
-  return grid;
+  return wardMap;
 }
 
 STATE Grid::mapState(int population) {
@@ -45,94 +30,76 @@ STATE Grid::mapState(int population) {
   }
 }
 
-void Grid::printGrid() {
-  for (int i = 0; i < rows; i++) {
-    std::cout << "|";
-    for (int j = 0; j < cols; j++) {
-      std::cout << grid[i][j].getState() << "|";
-    }
-    std::cout << std::endl;
+void Grid::printInfo() {
+  for (auto &ward : wardMap) {
+    std::cout << "Ward " << ward.second.getName() << " has "
+              << ward.second.getPopulationPerSquareMeter()
+              << " people per square meter and is in state "
+              << ward.second.getState() << std::endl;
   }
-  std::cout << std::endl;
 }
 
-std::vector<Ward> Grid::getNeighbors(int row, int col) {
-  std::vector<Ward> neighbors;
-  for (int i = row - 1; i <= row + 1; i++) {
-    for (int j = col - 1; j <= col + 1; j++) {
-      if (i >= 0 && i < rows && j >= 0 && j < cols) {
-        neighbors.push_back(grid[i][j]);
-      }
-    }
+std::vector<Ward> Grid::getNeighbors(Ward ward) {
+  std::vector<Ward> neighbours;
+  for (int neighbourID : ward.getNeighbourIDs()) {
+    neighbours.push_back(wardMap[neighbourID]);
   }
-  return neighbors;
+  return neighbours;
 }
 
 std::vector<double>
-Grid::getNeighbourAreas(int row, int col,
-                        std::vector<std::vector<Ward>> gridCopy) {
+Grid::getNeighbourAreas(Ward ward, std::unordered_map<int, Ward> wardMapCopy) {
   std::vector<double> neighbourAreas;
-  for (int i = row - 1; i <= row + 1; i++) {
-    for (int j = col - 1; j <= col + 1; j++) {
-      if (i >= 0 && i < rows && j >= 0 && j < cols) {
-        neighbourAreas.push_back(gridCopy[i][j].getArea());
-      }
-    }
+  for (int neighbourID : ward.getNeighbourIDs()) {
+    neighbourAreas.push_back(wardMapCopy[neighbourID].getArea());
   }
   return neighbourAreas;
 }
 
 std::vector<int>
-Grid::getNeighbourEnemies(int row, int col,
-                          std::vector<std::vector<Ward>> gridCopy) {
+Grid::getNeighbourEnemies(Ward ward,
+                          std::unordered_map<int, Ward> wardMapCopy) {
   std::vector<int> neighbourEnemies;
-  for (int i = row - 1; i <= row + 1; i++) {
-    for (int j = col - 1; j <= col + 1; j++) {
-      if (i >= 0 && i < rows && j >= 0 && j < cols) {
-        neighbourEnemies.push_back(gridCopy[i][j].getEnemiesPerSquareMeter());
-      }
-    }
+  for (int neighbourID : ward.getNeighbourIDs()) {
+    neighbourEnemies.push_back(
+        wardMapCopy[neighbourID].getEnemiesPerSquareMeter());
   }
   return neighbourEnemies;
 }
 
-void Grid::updateMoralities(int step) {
-  for (int i = 0; i < this->rows; i++) {
-    for (int j = 0; j < this->cols; j++) {
-      double mortalityRate = grid[i][j].getMortalityRate();
-      mortalityRate += exp(0.1 * step);
-      grid[i][j].setMoralityRate(mortalityRate);
-    }
+void Grid::updateMortalities(int step) {
+  for (auto &ward : wardMap) {
+    double mortalityRate = ward.second.getMortalityRate();
+    mortalityRate += exp(0.1 * step);
+    ward.second.setMoralityRate(mortalityRate);
   }
 }
 
 std::vector<STATE>
-Grid::getNeighboursStates(int row, int col,
-                          std::vector<std::vector<Ward>> gridCopy) {
+Grid::getNeighboursStates(Ward ward,
+                          std::unordered_map<int, Ward> wardMapCopy) {
   std::vector<STATE> neighbourStates;
-  for (int i = row - 1; i <= row + 1; i++) {
-    for (int j = col - 1; j <= col + 1; j++) {
-      if (i >= 0 && i < rows && j >= 0 && j < cols) {
-        neighbourStates.push_back(gridCopy[i][j].getState());
-      }
-    }
+  for (int neighbourID : ward.getNeighbourIDs()) {
+    neighbourStates.push_back(wardMapCopy[neighbourID].getState());
   }
   return neighbourStates;
 }
 
 void Grid::simulateStep(int step) {
-  std::vector<std::vector<Ward>> gridCopy = grid;
+  std::unordered_map<int, Ward> wardMapCopy = wardMap;
+
   // this->updateMoralities(step);
 
-  for (int i = 0; i < this->rows; i++) {
-    for (int j = 0; j < this->cols; j++) {
-      double density = gridCopy[i][j].getPopulationPerSquareMeter();
-      std::vector<double> neighbourAreas = getNeighbourAreas(i, j, gridCopy);
-      std::vector<int> neighbourEnemies = getNeighbourEnemies(i, j, gridCopy);
-      std::vector<STATE> neighboursStates = getNeighboursStates(i, j, gridCopy);
-      double mortalityRate = gridCopy[i][j].getMortalityRate();
-      grid[i][j].firstTransitionRule(density, neighbourAreas, neighbourEnemies,
-                                     mortalityRate, neighboursStates);
-    }
+  for (auto &ward : wardMap) {
+    double density = ward.second.getPopulationPerSquareMeter();
+    std::vector<double> neighbourAreas =
+        getNeighbourAreas(ward.second, wardMapCopy);
+    std::vector<int> neighbourEnemies =
+        getNeighbourEnemies(ward.second, wardMapCopy);
+    std::vector<STATE> neighboursStates =
+        getNeighboursStates(ward.second, wardMapCopy);
+    double mortalityRate = ward.second.getMortalityRate();
+    ward.second.firstTransitionRule(density, neighbourAreas, neighbourEnemies,
+                                    mortalityRate, neighboursStates);
   }
 }
