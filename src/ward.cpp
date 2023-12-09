@@ -87,7 +87,7 @@ void Ward::firstTransitionRule(double density,
   std::random_device rd;
   std::mt19937 gen(rd());
   // FIXME this
-  std::uniform_int_distribution<> dis(0, 1);
+  std::uniform_int_distribution<> dis(0, 2);
   int r = dis(gen);
 
   if (this->id == -7148211) {
@@ -100,21 +100,23 @@ void Ward::firstTransitionRule(double density,
   setStateWithDensity(v1t_plus_1);
 }
 
-//killed by pesticides
+// killed by pesticides
 void Ward::secondTransitionRule(double density) {
   double v1t_plus_1 = density * (1 - this->mortalityRate);
-    if (this->id == -7148211) {
-        std::cout << "density: " << this->getPopulationPerSquareMeter() << std::endl;
-        std::cout << "mortality rate: " << this->mortalityRate << std::endl;
-        std::cout << "v1t-plus-1: " << v1t_plus_1 << std::endl;
-    }
+  if (this->id == -7148211) {
+    std::cout << "density: " << this->getPopulationPerSquareMeter()
+              << std::endl;
+    std::cout << "mortality rate: " << this->mortalityRate << std::endl;
+    std::cout << "v1t-plus-1: " << v1t_plus_1 << std::endl;
+  }
   setStateWithDensity(v1t_plus_1);
-    if (this->id == -7148211) {
-        std::cout << "density: " << this->getPopulationPerSquareMeter() << std::endl;
-    }
+  if (this->id == -7148211) {
+    std::cout << "density: " << this->getPopulationPerSquareMeter()
+              << std::endl;
+  }
 }
 
-//natural migration - state based
+// natural migration - state based
 void Ward::thirdTransitionRule(const std::vector<STATE> &neighbourStates) {
   int positiveStatesSum = 0;
   int positiveStatesCount = 0;

@@ -4,6 +4,15 @@
 #include <getopt.h>
 #include <iostream>
 
+/**
+ * @brief parse the arguments
+ *
+ * @param argc The number of arguments
+ * @param argv The arguments
+ * @param steps The number of steps that will be simulated
+ * @param transitionRules The transition rules that will be used in the
+ * simulation
+ */
 void parseArgs(int argc, char *argv[], int &steps,
                std::bitset<3> &transitionRules) {
   int opt;
@@ -40,15 +49,15 @@ int main(int argc, char *argv[]) {
   if (!std::cin.eof()) {
     std::vector<Ward> wards = Parser::parseRowsFromFile(std::cin);
     Grid grid = Grid(wards);
-    //grid.printInfo();
+    // grid.printInfo();
     grid.exportState(0);
-    //std::cout << "---------------------" << std::endl;
+    // std::cout << "---------------------" << std::endl;
     parseArgs(argc, argv, steps, transitionRules);
     for (int i = 0; i < steps; i++) {
       grid.simulateStep(i, transitionRules);
-      //grid.printInfo();
+      // grid.printInfo();
       grid.exportState(i + 1);
-      //std::cout << "---------------------" << std::endl;
+      // std::cout << "---------------------" << std::endl;
     }
   } else {
     std::cerr << "No input provided" << std::endl;
