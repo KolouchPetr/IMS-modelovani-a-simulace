@@ -90,12 +90,6 @@ void Ward::firstTransitionRule(double density,
   std::uniform_int_distribution<> dis(0, 2);
   int r = dis(gen);
 
-  if (this->id == -7148211) {
-    std::cout << "density: " << density << std::endl;
-    std::cout << "e1t: " << e1t << std::endl;
-    std::cout << "r: " << r << std::endl;
-  }
-
   double v1t_plus_1 = density - e1t * r;
   setStateWithDensity(v1t_plus_1);
 }
@@ -103,17 +97,7 @@ void Ward::firstTransitionRule(double density,
 // killed by pesticides
 void Ward::secondTransitionRule(double density) {
   double v1t_plus_1 = density * (1 - this->mortalityRate);
-  if (this->id == -7148211) {
-    std::cout << "density: " << this->getPopulationPerSquareMeter()
-              << std::endl;
-    std::cout << "mortality rate: " << this->mortalityRate << std::endl;
-    std::cout << "v1t-plus-1: " << v1t_plus_1 << std::endl;
-  }
   setStateWithDensity(v1t_plus_1);
-  if (this->id == -7148211) {
-    std::cout << "density: " << this->getPopulationPerSquareMeter()
-              << std::endl;
-  }
 }
 
 // natural migration - state based

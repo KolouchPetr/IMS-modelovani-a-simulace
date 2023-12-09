@@ -54,19 +54,4 @@ for file in file_list:
         style_function=style_function
     ).add_to(m)
 
-    for _, row in data.iterrows():
-        feature = next((item for item in geojson['features'] if item['properties']['osm_id'] == row['id']), None)
-        if feature:
-            # Calculate the centroid of the polygon
-            polygon = shape(feature['geometry'])
-            point = polygon.centroid
-            # Create text with the density information
-            folium.Marker(
-                [point.y, point.x],
-                icon=folium.DivIcon(
-                    icon_size=(150,36),
-                    icon_anchor=(0,0),
-                    html=f'<div style="font-size: 12pt">{row["density"]}</div>',
-                )
-            ).add_to(m)
     m.save(f'../output/can_tho_map_{file[-5]}.html')
