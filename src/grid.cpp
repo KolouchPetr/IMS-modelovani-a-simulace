@@ -94,7 +94,8 @@ void Grid::exportState(int step) {
   }
   for (auto &ward : wardMap) {
     file << ward.second.getID() << "," << ward.second.getName() << ","
-         << ward.second.getState() << std::endl;
+         << ward.second.getState() << ","
+         << ward.second.getPopulationPerSquareMeter() << std::endl;
   }
   file.close();
 }

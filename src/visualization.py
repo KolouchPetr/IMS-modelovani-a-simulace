@@ -23,8 +23,9 @@ def get_color(state):
         return 'red'  # Worst condition
 
 def load_data(file_name):
-    df = pd.read_csv(file_name, header=None, names=["id", "name", "state"])
+    df = pd.read_csv(file_name, header=None, names=["id", "name", "state", "density"])
     df["state"] = pd.to_numeric(df["state"])
+    df["density"] = pd.to_numeric(df["density"])
     return df
 
 
