@@ -112,7 +112,7 @@ void Ward::thirdTransitionRule(const std::vector<STATE> &neighbourStates) {
   }
   int averageState = (positiveStatesCount > 0)
                          ? positiveStatesSum / positiveStatesCount
-                         : this->state;
+                         : 0;
   int deviation = abs(averageState - this->state);
   setState(static_cast<STATE>(deviation));
 }
