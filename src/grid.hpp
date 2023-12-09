@@ -19,8 +19,6 @@ public:
   getNeighbourAreas(Ward ward, std::unordered_map<int, Ward> wardMapCopy);
   std::vector<int>
   getNeighbourEnemies(Ward ward, std::unordered_map<int, Ward> wardMapCopy);
-  std::vector<int>
-  gigetNeighboursDensities(Ward ward, std::unordered_map<int, Ward> wardMapCopy);
   void updateMortalities(int step);
 
   std::vector<STATE>

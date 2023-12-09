@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
       grid.simulateStep(i, transitionRules);
       //grid.printInfo();
       grid.exportState(i + 1);
-      std::cout << "---------------------" << std::endl;
+      //std::cout << "---------------------" << std::endl;
     }
   } else {
     std::cerr << "No input provided" << std::endl;

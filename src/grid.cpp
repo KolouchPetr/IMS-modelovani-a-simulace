@@ -96,14 +96,6 @@ Grid::getNeighboursStates(Ward ward,
   return neighbourStates;
 }
 
-std::vector<int> Grid::getNeighboursDensities(Ward ward, std::unordered_map<int, Ward> wardMapCopy) {
-    std::vector<int> neighbourDensities;
-    for (int neighbourID : ward.getNeighbourIDs()) {
-        neighbourDensities.push_back(wardMapCopy[neighbourID].getPopulationPerSquareMeter());
-    }
-    return neighbourDensities;
-}
-
 void Grid::exportState(int step) {
   std::ofstream file("../output/states" + std::to_string(step) + ".csv");
 
