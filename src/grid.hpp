@@ -3,6 +3,8 @@
 
 #include "ward.hpp"
 #include <bitset>
+#include <fstream>
+#include <iostream>
 #include <unordered_map>
 #include <vector>
 
@@ -23,6 +25,7 @@ public:
   getNeighboursStates(Ward ward, std::unordered_map<int, Ward> wardMapCopy);
   STATE mapState(int population);
   void printInfo();
+  void exportState(int step);
 
 private:
   std::unordered_map<int, Ward> wardMap;

@@ -92,7 +92,6 @@ void Ward::firstTransitionRule(double density,
   }
 
   double v1t_plus_1 = density - e1t * r;
-
   setStateWithDensity(v1t_plus_1);
 }
 
@@ -105,7 +104,7 @@ void Ward::thirdTransitionRule(const std::vector<STATE> &neighbourStates) {
   int positiveStatesSum = 0;
   int positiveStatesCount = 0;
   for (STATE state : neighbourStates) {
-    if (state > NONE) {
+    if (state >= NORMAL) {
       positiveStatesSum += state;
       positiveStatesCount++;
     }

@@ -85,8 +85,26 @@ Grid::getNeighboursStates(Ward ward,
   return neighbourStates;
 }
 
+void Grid::exportState(int step) {
+  std::ofstream file("../output/states" + std::to_string(step) + ".csv");
+
+  if (!file.is_open()) {
+    std::cerr << "Error: file not open" << std::endl;
+    exit(1);
+  }
+  for (auto &ward : wardMap) {
+    file << ward.second.getID() << "," << ward.second.getName() << ","
+         << ward.second.getState() << std::endl;
+  }
+  file.close();
+}
+
 void Grid::simulateStep(int step, std::bitset<3> transitionRules) {
   std::unordered_map<int, Ward> wardMapCopy = wardMap;
+
+  if (transitionRules[1]) {
+    this->updateMortalities(step);
+  }
 
   for (auto &ward : wardMap) {
     double density = ward.second.getPopulationPerSquareMeter();
@@ -102,7 +120,6 @@ void Grid::simulateStep(int step, std::bitset<3> transitionRules) {
                                       neighbourEnemies);
     }
     if (transitionRules[1]) {
-      this->updateMortalities(step);
       ward.second.secondTransitionRule(density);
     }
     if (transitionRules[2]) {

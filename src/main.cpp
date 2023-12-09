@@ -41,11 +41,13 @@ int main(int argc, char *argv[]) {
     std::vector<Ward> wards = Parser::parseRowsFromFile(std::cin);
     Grid grid = Grid(wards);
     grid.printInfo();
+    grid.exportState(0);
     std::cout << "---------------------" << std::endl;
     parseArgs(argc, argv, steps, transitionRules);
     for (int i = 0; i < steps; i++) {
       grid.simulateStep(i, transitionRules);
       grid.printInfo();
+      grid.exportState(i + 1);
       std::cout << "---------------------" << std::endl;
     }
   } else {
