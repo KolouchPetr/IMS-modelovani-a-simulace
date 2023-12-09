@@ -32,7 +32,7 @@ STATE Grid::mapState(int population) {
 
 void Grid::printInfo() {
   for (auto &ward : wardMap) {
-    std::cout << "Ward " << ward.second.getName() << " has "
+    std::cout << "Ward ID " << ward.second.getID() << " named " << ward.second.getName() << " has "
               << ward.second.getPopulationPerSquareMeter()
               << " PHB per square meter and is in state "
               << ward.second.getState() << std::endl;
@@ -68,11 +68,22 @@ Grid::getNeighbourEnemies(Ward ward,
 }
 
 void Grid::updateMortalities(int step) {
+  //int count = 0;
+  //double sum = 0;
+
   for (auto &ward : wardMap) {
     double mortalityRate = ward.second.getMortalityRate();
-    mortalityRate += exp(0.1 * step);
+    mortalityRate += (exp(0.4 * step))/44;
+    if(mortalityRate > 1){
+        mortalityRate = 1;
+    }
+    //count++;
+    //sum += mortalityRate;
+    //std::cout << "Day: " << step << " mord rate: " << mortalityRate << std::endl;
     ward.second.setMoralityRate(mortalityRate);
   }
+  //std::cout << "Avg: " << sum/count << std::endl;
+
 }
 
 std::vector<STATE>

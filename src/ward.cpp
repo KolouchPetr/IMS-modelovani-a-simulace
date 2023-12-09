@@ -69,6 +69,7 @@ void Ward::setStateWithDensity(double density) {
     this->state = VERY_HIGH;
   }
 }
+// killed by natural enemies
 void Ward::firstTransitionRule(double density,
                                const std::vector<double> &neighbourAreas,
                                const std::vector<int> &neighbourEnemies) {
@@ -77,6 +78,10 @@ void Ward::firstTransitionRule(double density,
   int maxEnemyCount =
       (maxEnemyIter != neighbourEnemies.end()) ? *maxEnemyIter : 0;
   int maxEnemyIndex = std::distance(neighbourEnemies.begin(), maxEnemyIter);
+  /*std::cout << this->getID()
+            << " maxEnemy: " << neighbourAreas[maxEnemyIndex]
+            << " maxEnemyCount: " << maxEnemyCount
+            << " Area: " << this->area << std::endl; */
   int e1t = (neighbourAreas[maxEnemyIndex] * maxEnemyCount) / this->area;
 
   std::random_device rd;
@@ -85,7 +90,7 @@ void Ward::firstTransitionRule(double density,
   std::uniform_int_distribution<> dis(0, 1);
   int r = dis(gen);
 
-  if (this->id == 2396) {
+  if (this->id == -7148211) {
     std::cout << "density: " << density << std::endl;
     std::cout << "e1t: " << e1t << std::endl;
     std::cout << "r: " << r << std::endl;
@@ -95,11 +100,21 @@ void Ward::firstTransitionRule(double density,
   setStateWithDensity(v1t_plus_1);
 }
 
+//killed by pesticides
 void Ward::secondTransitionRule(double density) {
   double v1t_plus_1 = density * (1 - this->mortalityRate);
+    if (this->id == -7148211) {
+        std::cout << "density: " << this->getPopulationPerSquareMeter() << std::endl;
+        std::cout << "mortality rate: " << this->mortalityRate << std::endl;
+        std::cout << "v1t-plus-1: " << v1t_plus_1 << std::endl;
+    }
   setStateWithDensity(v1t_plus_1);
+    if (this->id == -7148211) {
+        std::cout << "density: " << this->getPopulationPerSquareMeter() << std::endl;
+    }
 }
 
+//natural migration
 void Ward::thirdTransitionRule(const std::vector<STATE> &neighbourStates) {
   int positiveStatesSum = 0;
   int positiveStatesCount = 0;

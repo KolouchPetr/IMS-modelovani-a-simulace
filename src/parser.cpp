@@ -9,7 +9,7 @@ std::vector<Ward> Parser::parseRowsFromFile(std::istream &stream) {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution<> distrEnemies(0, 10);
-  std::uniform_real_distribution<> distrMortality(0.0, 1.0);
+  std::uniform_real_distribution<> distrMortality(0.14, 0.22);
 
   while (std::getline(stream, line)) {
 
