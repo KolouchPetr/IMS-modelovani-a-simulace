@@ -114,7 +114,7 @@ void Ward::secondTransitionRule(double density) {
     }
 }
 
-//natural migration
+//natural migration - state based
 void Ward::thirdTransitionRule(const std::vector<STATE> &neighbourStates) {
   int positiveStatesSum = 0;
   int positiveStatesCount = 0;

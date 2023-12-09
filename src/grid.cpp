@@ -34,7 +34,7 @@ void Grid::printInfo() {
   for (auto &ward : wardMap) {
     std::cout << "Ward ID " << ward.second.getID() << " named " << ward.second.getName() << " has "
               << ward.second.getPopulationPerSquareMeter()
-              << " PHB per square meter and is in state "
+              << " BPH per square meter and is in state "
               << ward.second.getState() << std::endl;
   }
 }
@@ -94,6 +94,14 @@ Grid::getNeighboursStates(Ward ward,
     neighbourStates.push_back(wardMapCopy[neighbourID].getState());
   }
   return neighbourStates;
+}
+
+std::vector<int> Grid::getNeighboursDensities(Ward ward, std::unordered_map<int, Ward> wardMapCopy) {
+    std::vector<int> neighbourDensities;
+    for (int neighbourID : ward.getNeighbourIDs()) {
+        neighbourDensities.push_back(wardMapCopy[neighbourID].getPopulationPerSquareMeter());
+    }
+    return neighbourDensities;
 }
 
 void Grid::exportState(int step) {
